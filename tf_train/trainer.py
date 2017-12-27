@@ -25,6 +25,7 @@ class Trainer():
         ## validation dataset because the former may contain
         ## some augmentation
         ## these parsers are supplied by client
+        ##TODO: how to make client define a signature function???
         self.train_parser = config.train_parser,
         self.valid_parser = config.valid_parser,
         ## the tfrecords files for training and validation
@@ -118,6 +119,7 @@ class Trainer():
             while True:
 
                 ##main training loop
+                print 'Entering training loop...'
                 for _ in range( self.config.batch_per_epoch ):
 
                     images, labels = sess.run( next_element ,feed_dict={handle:train_handle})
@@ -125,7 +127,9 @@ class Trainer():
                                                      feed_dict={image_placeholder:images,
                                                                 label_placeholder:labels} )
 
-                    print 'Accuracy: {0}'.format( acc*100.)
+                    print 'Accuracy: {0},Entropy Loss: {1}, Total Loss: {2}'.format( acc*100.,
+                                                                                     entropy_loss,
+                                                                                     t_loss)
 
                 ##stop the training and collect some statistics
                 current_step, l_rate = sess.run( [global_steps ,learning_rate] )

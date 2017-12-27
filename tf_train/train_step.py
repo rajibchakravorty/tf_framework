@@ -104,9 +104,9 @@ def train_step( images, labels, output_length, network,
                                    name = 'accuracy' )
 
         ## one hot label and calculate loss
-        #label_one_hot = tf.one_hot( labels, depth = output_length )
-        mean_loss = loss_op( labels = labels, logits = logits,
-                        reduction=tf.losses.Reduction.MEAN)
+        label_one_hot = tf.one_hot( labels, depth = output_length )
+        loss = loss_op( labels = labels, logits = logits  )
+        mean_loss = tf.reduce_mean( loss )
 
         ## collect all losses [includes variable regularization if present]
         #TODO: check if really adds the regularization costs

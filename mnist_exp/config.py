@@ -9,11 +9,11 @@ from data_parser import Parser
 device_string = '/device:GPU:0'
 
 ## definition of epoch in terms of batch number
-batch_per_epoch = 5
-batch_size = 512
+batch_per_epoch = 230
+batch_size = 256
 
 ## batches to be used during statistics collections
-batch_per_test = 5
+batch_per_test = 39
 
 
 learning_rate_info = dict()
