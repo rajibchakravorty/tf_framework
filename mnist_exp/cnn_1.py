@@ -12,8 +12,7 @@ def cnn_archi( images ):
                                     padding = 'same',
                                     activation = tf.nn.relu,
                                     kernel_initializer=tf.initializers.truncated_normal(),
-                                    kernel_regularizer=contrib.layers.l1_l2_regularizer(),
-                                    bias_regularizer=contrib.layers.l1_l2_regularizer() )
+                                    kernel_regularizer=contrib.layers.l1_l2_regularizer())
 
 
     with tf.name_scope( 'conv1_2' ) as scope:
@@ -22,8 +21,7 @@ def cnn_archi( images ):
                                     padding = 'same',
                                     activation = tf.nn.relu,
                                     kernel_initializer=tf.initializers.truncated_normal(),
-                                    kernel_regularizer=contrib.layers.l1_l2_regularizer(),
-                                    bias_regularizer=contrib.layers.l1_l2_regularizer() )
+                                    kernel_regularizer=contrib.layers.l1_l2_regularizer())
 
 
     # pool1

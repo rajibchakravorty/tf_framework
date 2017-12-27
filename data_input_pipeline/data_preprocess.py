@@ -4,14 +4,24 @@ import numpy as np
 
 import tensorflow as tf
 
-import tensorflow.contrib as contrib
+'''
+tfrecord_list : a list of tfrecord file
+parse_function: A function with a signature parse_function( example_proto )
+batch_size : an integer denoting the size of the batch
+
+parser function is supplied by client and therefore this
+prepare_dataset is independent of the task in hand.
+
+Returns the Dataset
+'''
+
 
 #########################################
 # gets an input list of tfrecord file names
 # and prepares a datset
-# Note : only handles images as data for now
 #
 #########################################
+
 
 def prepare_dataset( tfrecord_list ,parse_function, batch_size ):
 

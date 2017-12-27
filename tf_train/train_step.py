@@ -1,44 +1,75 @@
-
+'''
+This file contains the typical steps of a classification task
+'''
 
 import tensorflow as tf
+import tensorflow.contrib as contrib
+from tensorflow.contrib import layers
 
+'''
+function to prepare the validation summary op.
+mean_loss and accuracy are tensors to be summarized
+for later viewing in the tensorboard
+'''
+def prep_valid_summary_op( mean_loss,accuracy ):
 
-def summary_op( mean_loss, learning_rate=None,
-                total_loss = None,
-                accuracy = None,
-                loss_collections = tf.GraphKeys.LOSSES,
-                summary_collection = 'train_summaries' ):
+    summary_collection = 'valid_summary'
 
     with tf.name_scope( summary_collection ) as scope:
-        tf.summary.scalar( 'mean_loss', mean_loss,
+        mean_loss_op = tf.summary.scalar( 'mean_loss', mean_loss,
                            collections=summary_collection )
+        acc_op = tf.summary.scalar( 'accuracy' ,accuracy, collections=summary_collection )
 
-        if total_loss is not None:
-            tf.summary.scalar( 'total_loss_summary', total_loss,
-                               collections=summary_collection)
-
-        if accuracy is not None:
-            tf.summary.scalar( 'accuracy', accuracy, collections=summary_collection )
-
-        if not 'train' in summary_collection:
-            losses = tf.get_collection('loss_collections')
-
-            for l in losses:
-                tf.summary.scalar(l.op.name, l, collections=summary_collection )
-
-            tf.summary.scalar('learning_rate', learning_rate,
-                              collections=summary_collection )
-
-            # Add histograms for trainable variables.
-            for var in tf.trainable_variables():
-                tf.summary.histogram(var.op.name, var)
-
-    summary_op = tf.summary.merge_all( key = summary_collection )
+    all_ops = [mean_loss_op]+[acc_op]
+    summary_op = tf.summary.merge( all_ops, collections = summary_collection )
 
     return summary_op
 
+'''
+function to prepare the training summary op.
+summarizes mean_loss, learning_rate, total_loss and accuracy
+in addition, it stores the variable statistics (histogram
+and distribution).
+'''
+def prep_train_summary_op( mean_loss, learning_rate,
+                total_loss,
+                accuracy ):
 
-def train_step( images, labels, network,
+    summary_collection = 'train_summary'
+
+    with tf.name_scope( summary_collection ) as scope:
+        mean_loss_op = tf.summary.scalar( 'mean_loss', mean_loss,
+                           collections=summary_collection )
+
+        acc_op = tf.summary.scalar( 'accuracy', accuracy,
+                           collections = summary_collection)
+
+        total_loss_op = tf.summary.scalar( 'total_loss_summary', total_loss,
+                               collections=summary_collection)
+
+        learn_rate_op = tf.summary.scalar( 'learning_rate', learning_rate,
+                           collections=summary_collection )
+
+
+        # Add histograms for trainable variables.
+        variable_ops = list()
+        for var in tf.trainable_variables():
+           variable_ops.append( tf.summary.histogram(var.op.name, var,
+                                                      collections=summary_collection) )
+
+    all_ops = [mean_loss_op] + [acc_op] + \
+              [total_loss_op] + [learn_rate_op]+variable_ops
+    summary_op = tf.summary.merge( all_ops, collections=summary_collection )
+
+    return summary_op
+
+'''
+training steps of a typical classification task
+Provision for supplying loss calculators and optimizers
+'''
+#TODO: test supplying other loss_op and optimizers
+
+def train_step( images, labels, output_length, network,
                 learning_rate_info, device_string,
                 cpu_device = '/device:CPU:0',
                 loss_op = tf.losses.sparse_softmax_cross_entropy,
@@ -59,31 +90,34 @@ def train_step( images, labels, network,
                                     learning_rate_info['decay_factor'],
                                     learning_rate_info['staircase'])
     with tf.device( device_string ):
-
+        ## get logits
         logits = network( images )
 
     with tf.device( cpu_device ):
 
+        ## predict classes
         pred_class = tf.argmax( logits, axis = 1,
                                 name='pred_class' )
 
+        ## calculate accuracy
         accuracy = tf.reduce_mean( tf.cast( tf.equal(labels, pred_class), tf.float32 ) ,
                                    name = 'accuracy' )
 
-        #TODO: have to make this configurable
-        label_one_hot = tf.one_hot( labels, depth = 10 )
-        loss = loss_op( labels = labels, logits = logits)
+        ## one hot label and calculate loss
+        #label_one_hot = tf.one_hot( labels, depth = output_length )
+        mean_loss = loss_op( labels = labels, logits = logits,
+                        reduction=tf.losses.Reduction.MEAN)
 
-        mean_loss = tf.reduce_mean( loss, name = 'mean_entropy_loss' )
-        tf.add_to_collection( loss_collections, mean_loss )
+        ## collect all losses [includes variable regularization if present]
+        #TODO: check if really adds the regularization costs
+        total_loss = tf.add_n( tf.get_collection(tf.GraphKeys.LOSSES ) )
 
-        total_loss = tf.add_n( tf.get_collection( loss_collections ),
-                               name = 'total_loss' )
-
+        ##calculate gradient and apply it
         grads = optimizer.compute_gradients( total_loss )
 
         train_op = optimizer.apply_gradients( grads,
                                               global_step = global_step_number )
     ###########################################################################
 
-    return logits, mean_loss, learning_rate, accuracy, total_loss, train_op
+    return logits, mean_loss, learning_rate, accuracy, \
+           global_step_number,total_loss, train_op
