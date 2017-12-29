@@ -3,4 +3,8 @@
 test_framework/*
 mnist_exp/checkpoints/*
 mnist_exp/checkpoints/train/*
-mnist_exp/checkpoints/test/*
+mnist_exp/checkpoints/valid/*
+catsdogs_exp/*
+catsdogs_exp/checkpoints/*
+catsdogs_exp/checkpoints/train/*
+catsdogs_exp/checkpoints/valid/*

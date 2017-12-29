@@ -130,7 +130,6 @@ class Trainer():
                     print 'Accuracy: {0},Entropy Loss: {1}, Total Loss: {2}'.format( acc*100.,
                                                                                      entropy_loss,
                                                                                      t_loss)
-
                 ##stop the training and collect some statistics
                 current_step, l_rate = sess.run( [global_steps ,learning_rate] )
                 print 'Step no {0}'.format( current_step )
