@@ -133,6 +133,7 @@ class Trainer():
                 ##stop the training and collect some statistics
                 current_step, l_rate = sess.run( [global_steps ,learning_rate] )
                 print 'Step no {0}'.format( current_step )
+                print 'Learning rate {0}'.format( l_rate )
                 ### collecting training stats
                 print 'Start collecting training statistics...'
                 entropy_loss = 0.
@@ -153,6 +154,9 @@ class Trainer():
                 t_loss       /= np.float32( self.config.batch_per_test )
                 acc          /= np.float32( self.config.batch_per_test )
 
+                print 'Saving Mean Loss {0},Total_loss {1}, Learning Rate {2} and Accuracy {3}'.\
+                    format( entropy_loss, t_loss, l_rate, acc )
+
                 train_summary = sess.run( train_summary_op,
                                           feed_dict={ mean_loss_summ: entropy_loss,
                                                       total_loss_summ:t_loss,
@@ -160,6 +164,7 @@ class Trainer():
                                                       accuracy_summ:acc } )
 
                 train_summary_writer.add_summary( train_summary, global_step=current_step)
+                train_summary_writer.flush()
 
                 ## collecting validation stats
                 print 'Start collecting validation statisitics...'
@@ -185,7 +190,7 @@ class Trainer():
 
                 valid_summary_writer.add_summary(valid_summary, global_step=current_step)
 
-                train_summary_writer.flush()
+
                 valid_summary_writer.flush()
 
                 ## TODO: save the model

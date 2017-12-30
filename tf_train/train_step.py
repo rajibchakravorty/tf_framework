@@ -31,9 +31,8 @@ summarizes mean_loss, learning_rate, total_loss and accuracy
 in addition, it stores the variable statistics (histogram
 and distribution).
 '''
-def prep_train_summary_op( mean_loss, learning_rate,
-                total_loss,
-                accuracy ):
+def prep_train_summary_op( mean_loss, total_loss,
+                           learning_rate,accuracy ):
 
     summary_collection = 'train_summary'
 
