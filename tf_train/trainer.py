@@ -32,7 +32,10 @@ class Trainer():
         self.train_tfrecords = config.train_tfrecords
         self.valid_tfrecords = config.valid_tfrecords
 
+        gpu_config = tf.ConfigProto(allow_soft_placement=True)
+        gpu_config.gpu_options.allow_growth = True
 
+        self.gpu_config = gpu_config
 
     def train(self):
 
@@ -40,7 +43,7 @@ class Trainer():
 
         with g.as_default():
 
-            sess = tf.Session(graph=g)
+            sess = tf.Session(graph=g, config = self.gpu_config)
 
             training_dataset = prepare_dataset(self.train_tfrecords,
                                                self.train_parser[0].parse_example,
