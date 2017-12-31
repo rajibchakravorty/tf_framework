@@ -9,8 +9,8 @@ from data_parser import Parser
 device_string = '/device:GPU:0'
 
 ## definition of epoch in terms of batch number
-batch_per_epoch = 1
-batch_size = 10
+batch_per_epoch = 175
+batch_size = 256
 
 ## batches to be used during statistics collections
 batch_per_test = 39
