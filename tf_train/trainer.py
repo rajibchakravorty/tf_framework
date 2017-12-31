@@ -126,6 +126,7 @@ class Trainer():
                 for _ in range( self.config.batch_per_epoch ):
 
                     images, labels = sess.run( next_element ,feed_dict={handle:train_handle})
+
                     _, entropy_loss, t_loss, acc = sess.run( [train_op,mean_loss,total_loss,accuracy],
                                                      feed_dict={image_placeholder:images,
                                                                 label_placeholder:labels} )
@@ -199,3 +200,6 @@ class Trainer():
                 ## TODO: save the model
                 ## possible configs : every time
                 ## only if validation loss is decreasing
+
+                saver.save( sess, self.config.model_checkpoint_path,\
+                            global_step=current_step)

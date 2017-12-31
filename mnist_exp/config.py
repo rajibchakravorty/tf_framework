@@ -9,15 +9,15 @@ from data_parser import Parser
 device_string = '/device:GPU:0'
 
 ## definition of epoch in terms of batch number
-batch_per_epoch = 230
-batch_size = 256
+batch_per_epoch = 1
+batch_size = 10
 
 ## batches to be used during statistics collections
 batch_per_test = 39
 
 
 learning_rate_info = dict()
-learning_rate_info['init_rate'] = 0.01
+learning_rate_info['init_rate'] = 0.001
 learning_rate_info['decay_steps'] = 1000
 learning_rate_info['decay_factor'] = 0.96
 learning_rate_info['staircase']  =True

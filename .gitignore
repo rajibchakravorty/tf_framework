@@ -8,3 +8,9 @@ catsdogs_exp/*
 catsdogs_exp/checkpoints/*
 catsdogs_exp/checkpoints/train/*
 catsdogs_exp/checkpoints/valid/*
+cifar-10/*
+cifar-10/checkpoints/*
+cifar-10/checkpoints/train/*
+cifar-10/checkpoints/valid/*
+
+

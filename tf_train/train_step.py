@@ -70,10 +70,11 @@ Provision for supplying loss calculators and optimizers
 
 def train_step( images, labels, output_length, network,
                 learning_rate_info, device_string,
+                optimizer = tf.train.AdamOptimizer,
                 cpu_device = '/device:CPU:0',
                 loss_op = tf.losses.sparse_softmax_cross_entropy,
                 loss_collections = tf.GraphKeys.LOSSES,
-                optimizer = tf.train.AdamOptimizer() ) :
+                 ) :
 
     ##################################################################
     ##### training steps #############################################
@@ -88,6 +89,8 @@ def train_step( images, labels, output_length, network,
                                     learning_rate_info['decay_steps'],
                                     learning_rate_info['decay_factor'],
                                     learning_rate_info['staircase'])
+
+    updater = optimizer( learning_rate = learning_rate )
     with tf.device( device_string ):
         ## get logits
         logits = network( images )
@@ -112,9 +115,9 @@ def train_step( images, labels, output_length, network,
         total_loss = tf.add_n( tf.get_collection(tf.GraphKeys.LOSSES ) )
 
         ##calculate gradient and apply it
-        grads = optimizer.compute_gradients( total_loss )
+        grads = updater.compute_gradients( total_loss )
 
-        train_op = optimizer.apply_gradients( grads,
+        train_op = updater.apply_gradients( grads,
                                               global_step = global_step_number )
     ###########################################################################
 
