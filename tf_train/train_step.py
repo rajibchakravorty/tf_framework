@@ -70,10 +70,11 @@ Provision for supplying loss calculators and optimizers
 
 def train_step( images, labels, output_length, network,
                 learning_rate_info, device_string,
+                loss_op=tf.losses.sparse_softmax_cross_entropy,
+                one_hot=False,
+                loss_collections=tf.GraphKeys.LOSSES,
                 optimizer = tf.train.AdamOptimizer,
                 cpu_device = '/device:CPU:0',
-                loss_op = tf.losses.sparse_softmax_cross_entropy,
-                loss_collections = tf.GraphKeys.LOSSES,
                  ) :
 
     ##################################################################
@@ -106,10 +107,13 @@ def train_step( images, labels, output_length, network,
                                    name = 'accuracy' )
 
         ## one hot label and calculate loss
-        label_one_hot = tf.one_hot( labels, depth = output_length )
-        loss = loss_op( labels = labels, logits = logits  )
-        mean_loss = tf.reduce_mean( loss )
+        if one_hot == True:
+            label_one_hot = tf.one_hot(labels, depth=output_length)
+            loss = loss_op(label_one_hot, logits=logits)
+        else:
+            loss = loss_op(labels=labels, logits=logits)
 
+        mean_loss = tf.reduce_mean(loss)
         ## collect all losses [includes variable regularization if present]
         #TODO: check if really adds the regularization costs
         total_loss = tf.add_n( tf.get_collection(tf.GraphKeys.LOSSES ) )
