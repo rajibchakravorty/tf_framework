@@ -72,8 +72,10 @@ def train_step( images, labels, output_length, network,
                 learning_rate_info, device_string,
                 loss_op=tf.losses.sparse_softmax_cross_entropy,
                 one_hot=False,
+                loss_op_kwargs = None,
                 loss_collections=tf.GraphKeys.LOSSES,
                 optimizer = tf.train.AdamOptimizer,
+                optimizer_kwargs = None,
                 cpu_device = '/device:CPU:0',
                  ) :
 
@@ -91,7 +93,11 @@ def train_step( images, labels, output_length, network,
                                     learning_rate_info['decay_factor'],
                                     learning_rate_info['staircase'])
 
-    updater = optimizer( learning_rate = learning_rate )
+    if optimizer_kwargs is None:
+        updater = optimizer( learning_rate = learning_rate )
+    else:
+        updater = optimizer( learning_rate=learning_rate, **optimizer_kwargs )
+
     with tf.device( device_string ):
         ## get logits
         logits = network( images )
@@ -109,9 +115,16 @@ def train_step( images, labels, output_length, network,
         ## one hot label and calculate loss
         if one_hot == True:
             label_one_hot = tf.one_hot(labels, depth=output_length)
-            loss = loss_op(label_one_hot, logits=logits)
+            if loss_op_kwargs is None:
+                loss = loss_op(label_one_hot, logits=logits)
+            else:
+                loss = loss_op(label_one_hot, logits=logits, **loss_op_kwargs )
         else:
-            loss = loss_op(labels=labels, logits=logits)
+            if loss_op_kwargs is None:
+                loss = loss_op(labels=labels, logits=logits)
+            else:
+                loss = loss_op(labels=labels, logits=logits, **loss_op_kwargs)
+
 
         mean_loss = tf.reduce_mean(loss)
         ## collect all losses [includes variable regularization if present]

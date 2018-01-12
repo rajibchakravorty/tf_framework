@@ -79,11 +79,16 @@ class Trainer():
 
             logits, mean_loss, learning_rate,\
             accuracy, global_steps, total_loss, train_op = \
-                train_step(image_placeholder, label_placeholder,
-                           self.config.class_numbers,
-                           self.network,
-                           self.config.learning_rate_info,
-                           self.config.device_string)
+                train_step(images = image_placeholder,
+                           labels = label_placeholder,
+                           output_length = self.config.class_numbers,
+                           network = self.network,
+                           learning_rate_info=self.config.learning_rate_info,
+                           device_string=self.config.device_string,
+                           loss_op=self.config.loss_op,
+                           loss_op_kwargs=self.config.loss_op_kwargs,
+                           optimizer=self.config.optimizer,
+                           optimizer_kwargs=self.config.optimizer_kwargs)
 
             ### summary_ops
             # easy way, create sum place holders and create the summary op

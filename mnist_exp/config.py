@@ -22,6 +22,16 @@ learning_rate_info['decay_steps'] = 1000
 learning_rate_info['decay_factor'] = 0.96
 learning_rate_info['staircase']  =True
 
+##loss operations
+loss_op=tf.losses.sparse_softmax_cross_entropy
+one_hot=False
+loss_op_kwargs = None
+
+##optimizers
+optimizer = tf.train.FtrlOptimizer
+optimizer_kwargs = {'l1_regularization_strength':0.2,
+                    'l2_regularization_strength':0.2}
+
 image_height = 28
 image_width  = 28
 image_channel  = 1
