@@ -1,8 +1,8 @@
 
-import numpy as np
 import tensorflow as tf
 
 import tensorflow.contrib as contrib
+
 
 def cnn_archi( images ):
 

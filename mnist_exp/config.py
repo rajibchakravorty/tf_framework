@@ -20,7 +20,7 @@ learning_rate_info = dict()
 learning_rate_info['init_rate'] = 0.001
 learning_rate_info['decay_steps'] = 1000
 learning_rate_info['decay_factor'] = 0.96
-learning_rate_info['staircase']  =True
+learning_rate_info['staircase']  =False
 
 ##loss operations
 loss_op=tf.losses.sparse_softmax_cross_entropy
@@ -28,9 +28,8 @@ one_hot=False
 loss_op_kwargs = None
 
 ##optimizers
-optimizer = tf.train.FtrlOptimizer
-optimizer_kwargs = {'l1_regularization_strength':0.2,
-                    'l2_regularization_strength':0.2}
+optimizer = tf.train.AdamOptimizer
+optimizer_kwargs = None
 
 image_height = 28
 image_width  = 28
@@ -39,7 +38,9 @@ image_channel  = 1
 class_numbers = 10
 
 checkpoint_path = './checkpoints'
-model_checkpoint_path = join( checkpoint_path+'model.ckpt')
+model_checkpoint_path = join( checkpoint_path, 'model.ckpt')
+prior_weights = None # join( checkpoint_path, 'model.ckpt-00000040' )
+
 train_summary_path = join( checkpoint_path, 'train' )
 valid_summary_path = join( checkpoint_path, 'valid' )
 

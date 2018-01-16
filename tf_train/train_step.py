@@ -70,13 +70,13 @@ Provision for supplying loss calculators and optimizers
 
 def train_step( images, labels, output_length, network,
                 learning_rate_info, device_string,
-                loss_op=tf.losses.sparse_softmax_cross_entropy,
-                one_hot=False,
-                loss_op_kwargs = None,
+                loss_op,
+                one_hot,
+                loss_op_kwargs,
+                optimizer,
+                optimizer_kwargs,
                 loss_collections=tf.GraphKeys.LOSSES,
-                optimizer = tf.train.AdamOptimizer,
-                optimizer_kwargs = None,
-                cpu_device = '/device:CPU:0',
+                cpu_device = '/device:CPU:0'
                  ) :
 
     ##################################################################

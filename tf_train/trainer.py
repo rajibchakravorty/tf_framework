@@ -86,6 +86,7 @@ class Trainer():
                            learning_rate_info=self.config.learning_rate_info,
                            device_string=self.config.device_string,
                            loss_op=self.config.loss_op,
+                           one_hot = self.config.one_hot,
                            loss_op_kwargs=self.config.loss_op_kwargs,
                            optimizer=self.config.optimizer,
                            optimizer_kwargs=self.config.optimizer_kwargs)
@@ -110,6 +111,8 @@ class Trainer():
                                     pad_step_number= True,
                                     keep_checkpoint_every_n_hours = 1)
 
+
+
             train_summary_writer = tf.summary.FileWriter( logdir=self.config.train_summary_path)
             valid_summary_writer = tf.summary.FileWriter( logdir = self.config.valid_summary_path )
 
@@ -122,6 +125,12 @@ class Trainer():
             sess.run(tf.global_variables_initializer())
             train_handle = sess.run(train_data_iterator.string_handle())
             valid_handle = sess.run( valid_data_iterator.string_handle() )
+
+            if not (self.config.prior_weights is None):
+                saver.restore(sess, self.config.prior_weights)
+                current_step, l_rate = sess.run([global_steps, learning_rate])
+                print 'Starting from Step {0} and learning rate {1}'.format( \
+                                current_step, l_rate )
 
             ## BIG Loop
             while True:
